@@ -7,6 +7,22 @@ totalCPU () {
 
 
 # Total memory usage (Free vs Used including percentage)
+percent () {
+    print $1 / $2 * 100
+}
+
+totalMem () {
+    free -h | awk '
+    function percentage(part, total) {
+        return int(part / total * 100) "%"
+    }
+    NR==2 {
+        print "Total:", $2, \
+              "\nUsed:", $3, percentage($3, $2), \
+              "\nFree:", $4, percentage($4, $2), \
+              "\nCache:", $6, percentage($6, $2)
+    }'
+}
 # Total disk usage (Free vs Used including percentage)
 
 diskUsage () {
@@ -20,4 +36,5 @@ diskUsage () {
 # Stretch goal: Feel free to optionally add more stats such as os version, uptime, load average, logged in users, failed login attempts etc.
 
 totalCPU
+totalMem
 diskUsage
