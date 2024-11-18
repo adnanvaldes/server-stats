@@ -7,14 +7,10 @@ totalCPU () {
 
 
 # Total memory usage (Free vs Used including percentage)
-percent () {
-    print $1 / $2 * 100
-}
-
 totalMem () {
     free -h | awk '
     function percentage(part, total) {
-        return int(part / total * 100) "%"
+        return sprintf("%.1f%%", (part / total * 100))
     }
     NR==2 {
         print "Total:", $2, \
