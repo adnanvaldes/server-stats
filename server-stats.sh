@@ -44,7 +44,7 @@ totalMem () {
 
 # Total disk usage (Free vs Used including percentage)
 diskUsage () {
-    df -h --total | grep "/" -w | awk '{split($1, arr, "/"); print "Device:", arr[length(arr)], "\nUsed:", $3,"/ Free:", $4, "("$5")"}'
+    df -h --total -T | grep "/" -w | awk '{split($1, arr, "/"); print "Device:", arr[length(arr)], "("$2")", "\nFree:", $5,"/ Used:", $4, "("$6")"}'
 }
 
 # Top 5 processes by CPU usage
