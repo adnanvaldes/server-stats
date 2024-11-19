@@ -15,8 +15,7 @@ WHITE='\033[0;37m'
 getSysInfo () {
     uptime -p
     echo -e "$(uname -or)"
-    w | awk 'NR==1 { print "Users:", $4 }'
-
+    w | awk -F "," 'NR==1 { gsub(/^ +| +$/, "", $2); print $2 }'
 }
 # Total CPU usage
 CPUData () {
