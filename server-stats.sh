@@ -18,15 +18,15 @@ getSysInfo () {
 # Total CPU usage
 CPUData () {
     # diving by cores to get total CPU utilization
-    ps -eo pcpu | awk -v cores=$(nproc) '{total += $1} END {print GREEN sprintf("CPU Load: %.1f", total / cores)"%" }'
+    ps -eo pcpu | awk -v cores=$(nproc) '{total += $1} END {print sprintf("CPU Load: %.1f", total / cores)"%" }'
 
     # match and assign the variables we are looking for (architecture and model name)
     lscpu | awk '
         /^Architecture:/ {arch = $2}
         /^Model name:/ {CPU = $3 " " $4 " " $5 " " $6}
         END {
-            print "CPU Model:", GREEN CPU RESET
-            print "Architecture:", GREEN arch RESET
+            print "CPU Model:", CPU
+            print "Architecture:", arch
         }'
     echo -e "Cores: $(nproc)"
 
