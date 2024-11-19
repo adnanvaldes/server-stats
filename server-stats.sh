@@ -1,13 +1,10 @@
 # Reset
 RESET='\033[0m'  
 
-# Regular Colors
-BLACK='\033[0;30m'      
+# Regular Colors  
 RED='\033[0;31m'        
 GREEN='\033[0;32m'       
 YELLOW='\033[0;33m'    
-BLUE='\033[0;34m' 
-PURPLE='\033[0;35m'      
 CYAN='\033[0;36m'        
 WHITE='\033[0;37m' 
 
@@ -17,6 +14,7 @@ getSysInfo () {
     echo -e "$(uname -or)"
     w | awk -F "," 'NR==1 { gsub(/^ +| +$/, "", $2); print $2 }'
 }
+
 # Total CPU usage
 CPUData () {
     # diving by cores to get total CPU utilization
