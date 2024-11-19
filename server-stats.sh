@@ -84,6 +84,9 @@ main () {
 
     printf "${RESET}\nTop 5 MEM processes\n===================\n${WHITE}"
     topMemProcs
+
+    # To avoid changing user's terminal colors
+    printf "${RESET}"
 }
 
 main
