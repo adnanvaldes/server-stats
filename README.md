@@ -20,5 +20,5 @@ Then simply run the script:
 
 A colorful, yet simple display of various stats from a Linux machine. Includes the top 5 CPU and Memory intensive processes, disk information and filesystem type for each device, and other data points:
 
-[server-stats](server-stats.png)
+![server-stats](server-stats.png)
 
