@@ -11,6 +11,13 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'        
 WHITE='\033[0;37m' 
 
+# System information
+getSysInfo () {
+    uptime -p
+    echo -e "$(uname -or)"
+    w | awk 'NR==1 { print "Users:", $4 }'
+
+}
 # Total CPU usage
 CPUData () {
     # diving by cores to get total CPU utilization
@@ -56,30 +63,27 @@ topMemProcs () {
     ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head -6
 }
 
-writeHeader() {
-    local start=1
-    local end=${1:-80}
-    local range=$(seq $start $end)
-	for i in $range ; do echo -n "${str}"; done
+main () {
+    printf "\n# ${WHITE}$(hostname) Performance Report #\n$(date -R)\n"
+
+    printf "${RESET}\nSys Info:\n=========\n${WHITE}"
+    getSysInfo
+
+
+    printf "${RESET}\nCPU Data:\n=========\n${GREEN}"
+    CPUData
+
+    printf "${RESET}\nMemory Usage:\n=============\n${YELLOW}"
+    totalMem
+
+    printf "${RESET}\nDisk Usage:\n===========\n${RED}"
+    diskUsage
+
+    printf "${RESET}\nTop 5 CPU processes\n===================\n${CYAN}"
+    topCPUProcs
+
+    printf "${RESET}\nTop 5 MEM processes\n===================\n${WHITE}"
+    topMemProcs
 }
 
-# Stretch goal: Feel free to optionally add more stats such as os version, uptime, load average, logged in users, failed login attempts etc.
-printf "
-#############################
-# Server Performance Report #
-#############################\n"
-
-printf "${RESET}\nCPU Data:\n=========\n${GREEN}"
-CPUData
-
-printf "${RESET}\nMemory Usage:\n=============\n${YELLOW}"
-totalMem
-
-printf "${RESET}\nDisk Usage:\n===========\n${RED}"
-diskUsage
-
-printf "${RESET}\nTop 5 CPU processes\n===================\n${CYAN}"
-topCPUProcs
-
-printf "${RESET}\nTop 5 MEM processes\n===================\n${WHITE}"
-topMemProcs
+main
