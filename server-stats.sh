@@ -1,8 +1,30 @@
-# Total CPU usage
+# Reset
+RESET='\033[0m'  
 
-totalCPU () {
+# Regular Colors
+BLACK='\033[0;30m'      
+RED='\033[0;31m'        
+GREEN='\033[0;32m'       
+YELLOW='\033[0;33m'    
+BLUE='\033[0;34m' 
+PURPLE='\033[0;35m'      
+CYAN='\033[0;36m'        
+WHITE='\033[0;37m' 
+
+# Total CPU usage
+CPUData () {
     # diving by cores to get total CPU utilization
-    ps -eo pcpu | awk -v cores=$(nproc) '{total += $1} END {print sprintf("CPU Load: %.1f", total / cores)"%"}'
+    ps -eo pcpu | awk -v cores=$(nproc) '{total += $1} END {print GREEN sprintf("CPU Load: %.1f", total / cores)"%" }'
+
+    # match and assign the variables we are looking for (architecture and model name)
+    lscpu | awk '
+        /^Architecture:/ {arch = $2}
+        /^Model name:/ {CPU = $3 " " $4 " " $5 " " $6}
+        END {
+            print "CPU Model:", GREEN CPU RESET
+            print "Architecture:", GREEN arch RESET
+        }'
+    echo -e "Cores: $(nproc)"
 
 }
 
@@ -13,16 +35,16 @@ totalMem () {
         return sprintf("%.1f%%", (part / total * 100))
     }
     NR==2 {
-        print "Total:", $2, \
-              "\nUsed:", $3, percentage($3, $2), \
-              "\nFree:", $4, percentage($4, $2), \
-              "\nCache:", $6, percentage($6, $2)
+        print   "Used:", $3, "/ " \
+                "Total:", $2, "("percentage($3, $2)")" \
+                "\nFree:", $4, "("percentage($4, $2)")", \
+                "\nCache:", $6, "("percentage($6, $2)")"
     }'
 }
 
 # Total disk usage (Free vs Used including percentage)
 diskUsage () {
-    df -h --total | grep "/" -w | awk '{split($1, arr, "/"); print "Device:", arr[length(arr)], "\nUsage:", $2, $3, $4, $5}'
+    df -h --total | grep "/" -w | awk '{split($1, arr, "/"); print "Device:", arr[length(arr)], "\nUsed:", $3,"/ Free:", $4, "("$5")"}'
 }
 
 # Top 5 processes by CPU usage
@@ -34,10 +56,30 @@ topMemProcs () {
     ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head -6
 }
 
-# Stretch goal: Feel free to optionally add more stats such as os version, uptime, load average, logged in users, failed login attempts etc.
+writeHeader() {
+    local start=1
+    local end=${1:-80}
+    local range=$(seq $start $end)
+	for i in $range ; do echo -n "${str}"; done
+}
 
-totalCPU
+# Stretch goal: Feel free to optionally add more stats such as os version, uptime, load average, logged in users, failed login attempts etc.
+printf "
+#############################
+# Server Performance Report #
+#############################\n"
+
+printf "${RESET}\nCPU Data:\n=========\n${GREEN}"
+CPUData
+
+printf "${RESET}\nMemory Usage:\n=============\n${YELLOW}"
 totalMem
+
+printf "${RESET}\nDisk Usage:\n===========\n${RED}"
 diskUsage
+
+printf "${RESET}\nTop 5 CPU processes\n===================\n${CYAN}"
 topCPUProcs
+
+printf "${RESET}\nTop 5 MEM processes\n===================\n${WHITE}"
 topMemProcs
